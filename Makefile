@@ -258,23 +258,19 @@ else ifneq (,$(filter $(platform), ngc wii wiiu))
    TARGET := $(TARGET_NAME)_libretro_$(platform).a
    CC = $(DEVKITPPC)/bin/powerpc-eabi-gcc$(EXE_EXT)
    CXX = $(DEVKITPPC)/bin/powerpc-eabi-g++$(EXE_EXT)
-   AR = $(DEVKITPPC)/bin/powerpc-eabi-ar$(EXE_EXT)
-   ENDIANNESS_DEFINES += -DGEKKO -mcpu=750 -meabi -mhard-float -DMSB_FIRST
-   FLAGS += -U__INT32_TYPE__ -U __UINT32_TYPE__ -D__INT32_TYPE__=int
-   EXTRA_INCLUDES := -I$(DEVKITPRO)/libogc/include
+   AR = $(DEVKITPPC)/bin/powerpc-eabi-ar$(EXE_EXT)  
+   PLATFORM_DEFINES += -DSDL_BYTEORDER=SDL_BIG_ENDIAN -DMSB_FIRST -DBYTE_ORDER=BIG_ENDIAN  -DBYTE_ORDER=BIG_ENDIAN 
+   PLATFORM_DEFINES += -DGEKKO -mcpu=750 -meabi -mhard-float -DHAVE_STRTOF_L -DHAVE_LOCALE
+   PLATFORM_DEFINES += -U__INT32_TYPE__ -U __UINT32_TYPE__ -D__INT32_TYPE__=int -D_GNU_SOURCE
    STATIC_LINKING = 1
-
-   # Nintendo WiiU
+   HAVE_COMPAT = 1
    ifneq (,$(findstring wiiu,$(platform)))
-      ENDIANNESS_DEFINES += -DWIIU -DHW_RVL -mwup
-
-   # Nintendo Wii
+      CFLAGS += -DDEFAULT_CFG_NAME="\"sd:/retroarch/cores/system/beetle-saturn.cfg\""
+      PLATFORM_DEFINES += -DWIIU -DHW_RVL
    else ifneq (,$(findstring wii,$(platform)))
-      ENDIANNESS_DEFINES += -DHW_RVL -mrvl
-
-   # Nintendo Game Cube
+      PLATFORM_DEFINES += -DHW_RVL -mrvl
    else ifneq (,$(findstring ngc,$(platform)))
-      ENDIANNESS_DEFINES += -DHW_DOL -mrvl
+      PLATFORM_DEFINES += -DHW_DOL -mrvl
    endif
 
 # Emscripten
